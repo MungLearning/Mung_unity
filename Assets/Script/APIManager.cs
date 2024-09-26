@@ -1,10 +1,11 @@
-using System.Collections;
-using System.Text;
 using System;
-using System.Collections.Generic;
+using System.Text;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using ReqandRes;
 
 [Serializable]
 public class ApiKeyData
@@ -12,85 +13,9 @@ public class ApiKeyData
     public string Encoding;
 }
 
-[Serializable]
-public class RequestData
+public class APIManager : MonoBehaviour
 {
-    public string serviceKey;
-    // 추 후 UI를 통해 입력 받을 값들
-    public string endde = "20240925";
-    public string pageNo = "1"; 
-
-    public string upkind = "417000";  
-    public string upr_cd = "6440000"; 
-    public string org_cd = "4490000";
-    public string state = "protect"; 
-    public string neuter_yn = null; 
-}
-
-[Serializable]
-public class ApiResponse
-{
-    public Response response;
-}
-
-[Serializable]
-public class Response
-{
-    public Header header;
-    public Body body;
-}
-
-[Serializable]
-public class Header
-{
-    public string reqNo;
-    public string resultCode;
-    public string resultMsg;
-}
-
-
-[Serializable]
-public class Body
-{
-    public ItemWrapper items; 
-}
-
-[Serializable]
-public class ItemWrapper
-{
-    public Item[] item; 
-}
-
-[Serializable]
-public class Item
-{
-    public string desertionNo;
-    public string filename;
-    public string happenDt;
-    public string happenPlace;
-    public string kindCd;
-    public string colorCd;
-    public string age;
-    public string weight;
-    public string sexCd;
-    public string neuterYn;
-    public string specialMark;
-    public string noticeNo;
-    public string noticeSdt;
-    public string noticeEdt;
-    public string popfile;
-    public string processState;
-    public string careNm;
-    public string careTel;
-    public string careAddr;
-    public string orgNm;
-    public string chargeNm;
-    public string officetel;
-}
-
-public class ApiConnect : MonoBehaviour
-{
-    private string baseUrl = "http://apis.data.go.kr/1543061/abandonmentPublicSrvc/abandonmentPublic";
+   private string baseUrl = "http://apis.data.go.kr/1543061/abandonmentPublicSrvc/abandonmentPublic";
     private float retryDelay = 10.0f;
     private int maxRetries = 3;
     private int currentRetries = 0;
@@ -162,10 +87,10 @@ public class ApiConnect : MonoBehaviour
 
         using (StreamWriter writer = new StreamWriter(filePath, false, Encoding.UTF8))
         {
-            writer.WriteLine("유기번호,발견장소,품종,색상,나이,체중,성별,중성화여부,특징");
+            writer.WriteLine("유기번호,품종,색상,나이,접수일시,체중,성별,중성화유무,기타 특징");
             foreach (Item item in items)
             {
-                string csvLine = $"\"{item.desertionNo}\",\"{item.happenPlace}\",\"{item.kindCd}\",\"{item.colorCd}\",\"{item.age}\",\"{item.weight}\",\"{item.sexCd}\",\"{item.neuterYn}\",\"{item.specialMark}\"";
+                string csvLine = $"\"{item.desertionNo}\",\"{item.kindCd}\",\"{item.colorCd}\",\"{item.age}\",\"{item.happenDt}\",\"{item.weight}\",\"{item.sexCd}\",\"{item.neuterYn}\",\"{item.specialMark}\"";
 
                 writer.WriteLine(csvLine);
             }
@@ -175,5 +100,3 @@ public class ApiConnect : MonoBehaviour
 
     }
 }
-
-
